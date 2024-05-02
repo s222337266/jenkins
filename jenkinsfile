@@ -42,8 +42,8 @@ pipeline {
             }
             post{
                 always{
-                    mail to: "injectsql001@gmail.com"
-                    subject: "Deployment successful"
+                    mail to: "injectsql001@gmail.com",
+                    subject: "Deployment successful",
                     body: " The deployment was successful"
                 }
             }
