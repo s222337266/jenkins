@@ -40,6 +40,13 @@ pipeline {
             steps {
                 echo "Deploying to production environment: ${env.PRODUCTION_ENVIRONMENT}"
             }
+            post{
+                always{
+                    mail to: "injectsql001@gmail.com"
+                    subject: "Deployment successful"
+                    body: " The deployment was successful"
+                }
+            }
         }
     }
 }
