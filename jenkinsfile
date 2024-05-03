@@ -52,7 +52,7 @@ pipeline {
         success {
             // Send success notification email with logs attached
             emailext (
-                to: 'user@example.com',
+                to: 'injectsql001@gmail.com',
                 subject: 'Pipeline Success',
                 body: 'Pipeline ran successfully.',
                 attachmentsPattern: '**/*.log'
@@ -61,7 +61,7 @@ pipeline {
         failure {
             // Send failure notification email with logs attached
             emailext (
-                to: 'user@example.com',
+                to: 'injectsql001@gmail.com',
                 subject: 'Pipeline Failure',
                 body: 'Pipeline failed.',
                 attachmentsPattern: '**/*.log'
