@@ -4,8 +4,9 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                // Build the code using Maven
-                sh 'mvn clean package'
+                echo "Build the code using Maven.."
+                sh "pwd"
+                sh "mvn clean package"
             }
         }
         stage('Unit and Integration Tests') {
