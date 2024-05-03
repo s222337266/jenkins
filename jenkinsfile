@@ -11,7 +11,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Fetching the source code from the directory path: ${env.DIRECTORY_PATH}"
-                echo "Compiling the code and generating necessary artifacts..."
+                sh "mvn clean package"
             }
         }
         stage('Test') {
