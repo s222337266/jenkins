@@ -1,53 +1,71 @@
 pipeline {
     agent any
     
-    environment {
-        DIRECTORY_PATH = "C:/Users/david/Documents/projects/jenkins"
-        TESTING_ENVIRONMENT = "AimsTestingEnvironment"
-        PRODUCTION_ENVIRONMENT = "AimsProd"
-    }
-    
     stages {
         stage('Build') {
             steps {
-                echo "Fetching the source code from the directory path: ${env.DIRECTORY_PATH}"
-                sh "mvn clean package"
+                // Build the code using Maven
+                sh 'mvn clean package'
             }
         }
-        stage('Test') {
+        stage('Unit and Integration Tests') {
             steps {
-                echo "Running unit tests..."
-                echo "Running integration tests..."
+                // Run unit tests
+                sh 'mvn test'
+                // Run integration tests
+                sh 'mvn integration-test'
             }
         }
-        stage('Code Quality Check') {
+        stage('Code Analysis') {
             steps {
-                echo "Checking the quality of the code..."
-                echo "Quality confirmed"
+                // Analyze the code using SonarQube
+                sh 'sonar-scanner'
             }
         }
-        stage('Deploy') {
+        stage('Security Scan') {
             steps {
-                echo "Deploying the application to a testing environment specified by the environment variable: ${env.TESTING_ENVIRONMENT}"
+                // Perform security scan using OWASP ZAP
+                sh 'zap-cli --quick-scan --spider --self-contained http://localhost:8080/myapp'
             }
         }
-        stage('Approval') {
+        stage('Deploy to Staging') {
             steps {
-                echo 'Waiting for approval...'
-                sleep 10
+                // Deploy the application to staging server (e.g., AWS EC2)
+                sh 'ssh user@staging-server "cd /path/to/app && ./deploy.sh"'
+            }
+        }
+        stage('Integration Tests on Staging') {
+            steps {
+                // Run integration tests on staging environment
+                sh 'curl http://staging-server:8080/integration-tests'
             }
         }
         stage('Deploy to Production') {
             steps {
-                echo "Deploying to production environment: ${env.PRODUCTION_ENVIRONMENT}"
+                // Deploy the application to production server (e.g., AWS EC2)
+                sh 'ssh user@production-server "cd /path/to/app && ./deploy.sh"'
             }
-            post{
-                always{
-                    mail to: "injectsql001@gmail.com",
-                    subject: "Deployment successful",
-                    body: " The deployment was successful"
-                }
-            }
+        }
+    }
+    
+    post {
+        success {
+            // Send success notification email with logs attached
+            emailext (
+                to: 'user@example.com',
+                subject: 'Pipeline Success',
+                body: 'Pipeline ran successfully.',
+                attachmentsPattern: '**/*.log'
+            )
+        }
+        failure {
+            // Send failure notification email with logs attached
+            emailext (
+                to: 'user@example.com',
+                subject: 'Pipeline Failure',
+                body: 'Pipeline failed.',
+                attachmentsPattern: '**/*.log'
+            )
         }
     }
 }
